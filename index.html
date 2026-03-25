@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bishwas L. Shrestha, Ph.D.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #04050d;
+      --deep: #080c1a;
+      --mid: #0d1530;
+      --accent1: #4fa3e0;
+      --accent2: #9b6dff;
+      --accent3: #e06fa3;
+      --gold: #c8a96e;
+      --mist: #a8b8d8;
+      --text: #dde6f5;
+      --subtle: #6478a0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--void);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── STAR CANVAS ── */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── NEBULA GLOW ── */
+    .nebula {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .nebula-1 { width: 700px; height: 700px; background: var(--accent2); top: -200px; right: -200px; }
+    .nebula-2 { width: 500px; height: 500px; background: var(--accent1); bottom: 10%; left: -150px; }
+    .nebula-3 { width: 400px; height: 400px; background: var(--accent3); top: 40%; right: 5%; opacity: 0.07; }
+
+    /* ── LAYOUT ── */
+    .site-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(4,5,13,0.95), transparent);
+      backdrop-filter: blur(4px);
+    }
+
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--accent1);
+      letter-spacing: 0.15em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.82rem;
+      color: var(--mist);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--accent1); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 6rem;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent1);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2.8rem, 6vw, 4.8rem);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    h1 em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-position {
+      margin-top: 1.2rem;
+      font-size: 1rem;
+      color: var(--mist);
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-position span {
+      color: var(--gold);
+      font-weight: 400;
+    }
+
+    .hero-desc {
+      margin-top: 1.4rem;
+      font-size: 0.95rem;
+      color: var(--subtle);
+      max-width: 520px;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.75s;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2.4rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.9s;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.6rem;
+      border-radius: 2px;
+      font-size: 0.82rem;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: #fff;
+    }
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(79,163,224,0.3); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--mist);
+      border: 1px solid rgba(168,184,216,0.25);
+    }
+    .btn-ghost:hover { border-color: var(--accent1); color: var(--accent1); transform: translateY(-2px); }
+
+    /* Avatar placeholder */
+    .avatar-frame {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--mid), var(--deep));
+      border: 1px solid rgba(79,163,224,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 1s;
+      flex-shrink: 0;
+    }
+
+    .avatar-ring {
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 1px solid rgba(79,163,224,0.15);
+      animation: spin 20s linear infinite;
+    }
+
+    .avatar-ring::before {
+      content: '';
+      position: absolute;
+      width: 8px; height: 8px;
+      background: var(--accent1);
+      border-radius: 50%;
+      top: 50%; left: -4px;
+      transform: translateY(-50%);
+      box-shadow: 0 0 12px var(--accent1);
+    }
+
+    .avatar-initials {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--accent1);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── SECTION COMMONS ── */
+    section {
+      padding: 6rem 0;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent1);
+      margin-bottom: 0.8rem;
+    }
+
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      line-height: 1.2;
+      margin-bottom: 2.5rem;
+    }
+
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(to right, var(--accent1), transparent);
+      margin: 1.5rem 0 3rem;
+    }
+
+    /* ── RESEARCH GRID ── */
+    .research-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .research-card {
+      background: rgba(13,21,48,0.6);
+      border: 1px solid rgba(79,163,224,0.1);
+      border-radius: 4px;
+      padding: 1.8rem;
+      transition: all 0.35s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .research-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(79,163,224,0.04), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .research-card:hover { border-color: rgba(79,163,224,0.3); transform: translateY(-4px); }
+    .research-card:hover::before { opacity: 1; }
+
+    .rc-icon {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .rc-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+
+    .rc-desc {
+      font-size: 0.88rem;
+      color: var(--subtle);
+      line-height: 1.7;
+    }
+
+    /* ── INSTRUMENTS ── */
+    .instrument-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .instrument-pill {
+      padding: 0.5rem 1.2rem;
+      border: 1px solid rgba(155,109,255,0.3);
+      border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--accent2);
+      background: rgba(155,109,255,0.06);
+      transition: all 0.3s;
+    }
+
+    .instrument-pill:hover {
+      background: rgba(155,109,255,0.15);
+      border-color: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    /* ── PUBLICATIONS ── */
+    .pub-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .pub-card {
+      background: rgba(8,12,26,0.8);
+      border-left: 2px solid rgba(79,163,224,0.25);
+      padding: 1.6rem 1.8rem;
+      transition: border-color 0.3s;
+      position: relative;
+    }
+
+    .pub-card:hover { border-left-color: var(--accent1); }
+
+    .pub-year {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent1);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.4rem;
+    }
+
+    .pub-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.4;
+      margin-bottom: 0.5rem;
+    }
+
+    .pub-journal {
+      font-size: 0.82rem;
+      color: var(--gold);
+      font-style: italic;
+      margin-bottom: 0.6rem;
+    }
+
+    .pub-abstract {
+      font-size: 0.84rem;
+      color: var(--subtle);
+      line-height: 1.7;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .pub-link {
+      display: inline-block;
+      margin-top: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent1);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: opacity 0.2s;
+    }
+    .pub-link:hover { opacity: 0.7; }
+
+    /* ── CONTACT ── */
+    #contact {
+      text-align: center;
+      padding-bottom: 8rem;
+    }
+
+    .contact-card {
+      background: linear-gradient(135deg, rgba(13,21,48,0.9), rgba(8,12,26,0.9));
+      border: 1px solid rgba(79,163,224,0.15);
+      border-radius: 6px;
+      padding: 3.5rem 3rem;
+      max-width: 560px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--accent1), transparent);
+    }
+
+    .contact-email {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--accent1);
+      margin: 1.5rem 0;
+    }
+
+    .social-row {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.3rem;
+      border: 1px solid rgba(168,184,216,0.2);
+      border-radius: 2px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--mist);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: all 0.3s;
+    }
+    .social-btn:hover { border-color: var(--accent1); color: var(--accent1); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(168,184,216,0.06);
+      padding: 2rem 0;
+      text-align: center;
+    }
+
+    .footer-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--subtle);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-text a { color: var(--accent1); text-decoration: none; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .avatar-frame { width: 130px; height: 130px; order: -1; }
+      .research-grid { grid-template-columns: 1fr; }
+      .contact-card { padding: 2.5rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="starfield"></canvas>
+  <div class="nebula nebula-1"></div>
+  <div class="nebula nebula-2"></div>
+  <div class="nebula nebula-3"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#">BLS.PHD</a>
+    <ul class="nav-links">
+      <li><a href="#research">Research</a></li>
+      <li><a href="#publications">Papers</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="site-wrapper">
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-inner">
+        <div>
+          <p class="hero-tag">// Postdoctoral Researcher · Princeton University</p>
+          <h1>Bishwas L.<br><em>Shrestha</em></h1>
+          <p class="hero-position">Department of Astrophysical Sciences &mdash; <span>Space Physics Group</span></p>
+          <p class="hero-desc">
+            I study pickup ion dynamics at heliospheric shocks and energetic neutral atom (ENA) emission
+            from the solar wind–local interstellar medium interaction. Lead developer of the Level&nbsp;3
+            science algorithms for the <strong style="color:var(--mist);font-weight:500;">SWAPI</strong> instrument aboard NASA's IMAP mission.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#publications">View Publications</a>
+            <a class="btn btn-ghost" href="#contact">Get in Touch</a>
+          </div>
+        </div>
+        <div class="avatar-frame">
+          <div class="avatar-ring"></div>
+          <span class="avatar-initials">BLS</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESEARCH -->
+    <section id="research">
+      <div class="reveal">
+        <p class="section-label">// Research Areas</p>
+        <h2>Mapping the Edge<br>of the Solar System</h2>
+        <div class="divider"></div>
+
+        <div class="research-grid">
+
+          <div class="research-card reveal">
+            <div class="rc-icon">🌊</div>
+            <div class="rc-title">Pickup Ion Dynamics at Shocks</div>
+            <div class="rc-desc">
+              Investigating the acceleration and heating of interstellar pickup ions at distant
+              interplanetary shocks, planetary bow shocks, and the heliospheric termination shock
+              using high-cadence in-situ measurements from New Horizons/SWAP.
+            </div>
+          </div>
+
+          <div class="research-card reveal">
+            <div class="rc-icon">⚡</div>
+            <div class="rc-title">Energetic Neutral Atom Observations</div>
+            <div class="rc-desc">
+              Using high-resolution ENA flux maps from IBEX-Hi to understand the time-dependent
+              evolution of the heliosphere, including the strength and geometry of the termination
+              shock across multiple sky directions.
+            </div>
+          </div>
+
+          <div class="research-card reveal">
+            <div class="rc-icon">🛰️</div>
+            <div class="rc-title">IMAP / SWAPI Instrument Science</div>
+            <div class="rc-desc">
+              Leading the development of Level&nbsp;3 science algorithms for the Solar Wind and Pickup
+              Ion (SWAPI) instrument — a top-hat electrostatic analyzer measuring solar wind protons,
+              alpha particles, and interstellar pickup ions at the Sun-Earth L1 point.
+            </div>
+          </div>
+
+          <div class="research-card reveal">
+            <div class="rc-icon">🌌</div>
+            <div class="rc-title">Solar Wind–LISM Interaction</div>
+            <div class="rc-desc">
+              Analyzing global ENA models and 3D MHD heliosphere simulations to extract the
+              compression ratio and global structure of the termination shock from IBEX
+              observations, and probing coronal hole evolution via ENA spectral signatures.
+            </div>
+          </div>
+
+        </div>
+
+        <div class="instrument-row">
+          <div class="instrument-pill">IMAP / SWAPI</div>
+          <div class="instrument-pill">New Horizons / SWAP</div>
+          <div class="instrument-pill">IBEX-Hi</div>
+          <div class="instrument-pill">ENA Mapping</div>
+          <div class="instrument-pill">Termination Shock</div>
+          <div class="instrument-pill">Pickup Ions</div>
+          <div class="instrument-pill">MHD Simulations</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PUBLICATIONS -->
+    <section id="publications">
+      <div class="reveal">
+        <p class="section-label">// Selected Publications</p>
+        <h2>Peer-Reviewed<br>Research</h2>
+        <div class="divider"></div>
+
+        <div class="pub-list">
+
+          <div class="pub-card reveal">
+            <div class="pub-year">2025</div>
+            <div class="pub-title">High-resolution Observations of Pickup-ion-mediated Shocks to 60 au</div>
+            <div class="pub-journal">Bishwas L. Shrestha et al. &mdash; ApJ</div>
+            <div class="pub-abstract">
+              Analysis of 14 distant interplanetary shocks observed by the SWAP instrument aboard New Horizons
+              from ~52–60 au, with 30-minute pickup ion cadence, characterizing fast-mode shocks in the 
+              outer heliosphere and the role of pickup ion pressure.
+            </div>
+            <a class="pub-link" href="https://scholar.google.com/citations?user=EF5JX4oAAAAJ" target="_blank">→ scholar.google.com</a>
+          </div>
+
+          <div class="pub-card reveal">
+            <div class="pub-year">2024</div>
+            <div class="pub-title">Suprathermal H⁺ Pickup Ion Tails in the Outer Heliosphere</div>
+            <div class="pub-journal">Bishwas L. Shrestha et al. &mdash; ApJ 960, 35</div>
+            <div class="pub-abstract">
+              Detailed analysis of five distant interplanetary shocks observed by New Horizons/SWAP
+              at 23.71–36.75 au, demonstrating for the first time how downstream H⁺ PUI tail number density
+              varies with shock compression ratio.
+            </div>
+            <a class="pub-link" href="https://scholar.google.com/citations?user=EF5JX4oAAAAJ" target="_blank">→ scholar.google.com</a>
+          </div>
+
+          <div class="pub-card reveal">
+            <div class="pub-year">2025</div>
+            <div class="pub-title">The Solar Wind and Pickup Ion (SWAPI) Instrument on NASA's IMAP</div>
+            <div class="pub-journal">B. L. Shrestha, J. Teifert, S. E. Weidner et al. &mdash; Space Science Reviews</div>
+            <div class="pub-abstract">
+              Full instrument paper for SWAPI: a top-hat electrostatic analyzer measuring energy-per-charge
+              distributions of solar wind protons (H⁺), alpha particles (He²⁺), and interstellar PUIs
+              across 0.1–20 keV/q at the Sun-Earth L1 Lagrange point.
+            </div>
+            <a class="pub-link" href="https://link.springer.com/article/10.1007/s11214-025-01229-8" target="_blank">→ Springer · Space Sci. Rev.</a>
+          </div>
+
+          <div class="pub-card reveal">
+            <div class="pub-year">2023</div>
+            <div class="pub-title">Tracking the Rapid Opening and Closing of Polar Coronal Holes through IBEX ENA Observations</div>
+            <div class="pub-journal">Bishwas L. Shrestha et al. &mdash; ApJ 943, 34</div>
+            <div class="pub-abstract">
+              Using IBEX ENA spectral index maps to trace latitudinal boundaries between fast and slow
+              solar wind, revealing a rapid evolution of polar coronal holes in 2012–2014 with a
+              ~2.5-year transit delay to the heliospheric boundary.
+            </div>
+            <a class="pub-link" href="https://scholar.google.com/citations?user=EF5JX4oAAAAJ" target="_blank">→ scholar.google.com</a>
+          </div>
+
+          <div class="pub-card reveal">
+            <div class="pub-year">2021</div>
+            <div class="pub-title">Strength of the Termination Shock Inferred from Globally Distributed ENA Flux from IBEX</div>
+            <div class="pub-journal">Bishwas L. Shrestha et al. &mdash; ApJS 254, 32</div>
+            <div class="pub-abstract">
+              Quantitative comparison of observed and simulated inner heliosheath ENA fluxes using a
+              3D steady-state MHD heliosphere model with multi-Maxwellian proton distributions, estimating
+              the termination shock compression ratio across multiple sky directions.
+            </div>
+            <a class="pub-link" href="https://scholar.google.com/citations?user=EF5JX4oAAAAJ" target="_blank">→ scholar.google.com</a>
+          </div>
+
+        </div>
+
+        <div style="margin-top:2rem;text-align:right;">
+          <a class="btn btn-ghost" href="https://scholar.google.com/citations?user=EF5JX4oAAAAJ" target="_blank">All Publications →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="reveal">
+        <p class="section-label">// Contact</p>
+        <h2>Let's Connect</h2>
+        <div class="divider" style="margin-left:auto;margin-right:auto;background:linear-gradient(to left,transparent,var(--accent1))"></div>
+
+        <div class="contact-card">
+          <p style="color:var(--mist);font-size:0.95rem;">I'm happy to discuss heliospheric physics, IMAP/SWAPI science, or potential collaborations.</p>
+          <div class="contact-email">bishwasls [at] princeton.edu</div>
+          <p style="font-size:0.82rem;color:var(--subtle);">
+            Princeton Space Physics Group · 171 Broadmead, Princeton, NJ
+          </p>
+          <div class="social-row">
+            <a class="social-btn" href="https://scholar.google.com/citations?user=EF5JX4oAAAAJ" target="_blank">
+              📄 Google Scholar
+            </a>
+            <a class="social-btn" href="https://www.researchgate.net/profile/Bishwas-L-Shrestha" target="_blank">
+              🔬 ResearchGate
+            </a>
+            <a class="social-btn" href="https://spacephysics.princeton.edu/people/bishwas-shrestha-phd" target="_blank">
+              🏛️ Princeton Page
+            </a>
+            <a class="social-btn" href="https://www.linkedin.com/in/bishwas-l-shrestha-phd-4282b325/" target="_blank">
+              💼 LinkedIn
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /site-wrapper -->
+
+  <footer>
+    <div class="site-wrapper">
+      <p class="footer-text">
+        Bishwas L. Shrestha, Ph.D. &nbsp;·&nbsp; Princeton Space Physics &nbsp;·&nbsp;
+        Built for <a href="https://github.com" target="_blank">GitHub Pages</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    /* ── STARFIELD ── */
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const STARS = Array.from({ length: 280 }, () => ({
+      x: Math.random(),
+      y: Math.random(),
+      r: Math.random() * 1.2 + 0.2,
+      a: Math.random(),
+      speed: Math.random() * 0.0006 + 0.0001,
+      phase: Math.random() * Math.PI * 2,
+    }));
+
+    function drawStars(t) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const s of STARS) {
+        const alpha = s.a * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase));
+        ctx.beginPath();
+        ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200,220,255,${alpha})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(drawStars);
+    }
+    requestAnimationFrame(drawStars);
+
+    /* ── SCROLL REVEAL ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
